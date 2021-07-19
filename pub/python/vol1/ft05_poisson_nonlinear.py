@@ -45,18 +45,25 @@ v = TestFunction(V)
 f = Expression(f_code, degree=2)
 F = q(u)*dot(grad(u), grad(v))*dx - f*v*dx
 
+
+# Create VTK file for saving solution
+vtkfile = File('poisson_nonlinear/solution.pvd')
+
+
 # Compute solution
 solve(F == 0, u, bc)
 
-# Plot solution
+
+# Save to file and plot solution
+vtkfile << u
 plot(u)
 
 # Compute maximum error at vertices. This computation illustrates
 # an alternative to using compute_vertex_values as in poisson.py.
-u_e = interpolate(u_D, V)
-import numpy as np
-error_max = np.abs(u_e.vector().array() - u.vector().array()).max()
-print('error_max = ', error_max)
+# u_e = interpolate(u_D, V)
+# import numpy as np
+# error_max = np.abs(u_e.vector().array() - u.vector().array()).max()
+# print('error_max = ', error_max)
 
 # Hold plot
-interactive()
+# interactive()
