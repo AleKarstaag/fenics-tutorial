@@ -43,8 +43,8 @@ solve(a == L, w, bc)
 
 # Plot solution
 p = interpolate(p, V)
-plot(w, title='Deflection')
-plot(p, title='Load')
+# plot(w, title='Deflection')
+# plot(p, title='Load')
 
 # Save solution to file in VTK format
 vtkfile_w = File('poisson_membrane/deflection.pvd')
@@ -70,4 +70,4 @@ plt.savefig('poisson_membrane/curves.png')
 
 # Hold plots
 # interactive()
-# plt.show()
+plt.show()

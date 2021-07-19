@@ -39,7 +39,7 @@ def epsilon(u):
     #return sym(nabla_grad(u))
 
 def sigma(u):
-    return lambda_*nabla_div(u)*Identity(d) + 2*mu*epsilon(u)
+    return lambda_*div(u)*Identity(d) + 2*mu*epsilon(u)
 
 # Define variational problem
 u = TrialFunction(V)
