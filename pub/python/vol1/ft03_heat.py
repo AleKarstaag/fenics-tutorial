@@ -11,7 +11,7 @@ Test problem is chosen to give an exact solution at all nodes of the mesh.
 """
 
 from __future__ import print_function
-from fenics import *
+import fenics as FnX
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -23,32 +23,32 @@ beta = 1.2         # parameter beta
 
 # Create mesh and define function space
 nx = ny = 8
-mesh = UnitSquareMesh(nx, ny)
-V = FunctionSpace(mesh, 'P', 1)
+mesh = FnX.UnitSquareMesh(nx, ny)
+V = FnX.FunctionSpace(mesh, 'P', 1)
 
 # Define boundary condition
-u_D = Expression('1 + x[0]*x[0] + alpha*x[1]*x[1] + beta*t',
+u_D = FnX.Expression('1 + x[0]*x[0] + alpha*x[1]*x[1] + beta*t',
                  degree=2, alpha=alpha, beta=beta, t=0)
 
 def boundary(x, on_boundary):
     return on_boundary
 
-bc = DirichletBC(V, u_D, boundary)
+bc = FnX.DirichletBC(V, u_D, boundary)
 
 # Define initial value
-u_n = interpolate(u_D, V)
+u_n = FnX.interpolate(u_D, V)
 #u_n = project(u_D, V)
 
 # Define variational problem
-u = TrialFunction(V)
-v = TestFunction(V)
-f = Constant(beta - 2 - 2*alpha)
+u = FnX.TrialFunction(V)
+v = FnX.TestFunction(V)
+f = FnX.Constant(beta - 2 - 2*alpha)
 
-F = u*v*dx + dt*dot(grad(u), grad(v))*dx - (u_n + dt*f)*v*dx
-a, L = lhs(F), rhs(F)
+F = u*v*FnX.dx + dt*FnX.dot(FnX.grad(u), FnX.grad(v))*FnX.dx - (u_n + dt*f)*v*FnX.dx
+a, L = FnX.lhs(F), FnX.rhs(F)
 
 # Time-stepping
-u = Function(V)
+u = FnX.Function(V)
 t = 0
 import numpy as np
 for n in range(num_steps):
@@ -58,13 +58,13 @@ for n in range(num_steps):
     u_D.t = t
 
     # Compute solution
-    solve(a == L, u, bc)
+    FnX.solve(a == L, u, bc)
 
     # Plot solution
-    plot(u)
+    FnX.plot(u)
 
-    # Compute maximum error at vertices
-    u_e = interpolate(u_D, V)
+    # Compute error at vertices
+    u_e = FnX.interpolate(u_D, V)
     vertex_values_u_e = u_e.compute_vertex_values(mesh)
     vertex_values_u = u.compute_vertex_values(mesh)
     error_= np.max(np.abs(vertex_values_u_e - vertex_values_u))
@@ -75,4 +75,3 @@ for n in range(num_steps):
 
 # Hold plot
 plt.show()
-# interactive()

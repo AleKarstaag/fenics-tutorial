@@ -65,5 +65,15 @@ plot(u)
 # error_max = np.abs(u_e.vector().array() - u.vector().array()).max()
 # print('error_max = ', error_max)
 
+# Compute error at vertices
+import numpy as np
+
+u_e = interpolate(u_D, V)
+vertex_values_u_e = u_e.compute_vertex_values(mesh)
+vertex_values_u = u.compute_vertex_values(mesh)
+error_= np.max(np.abs(vertex_values_u_e - vertex_values_u))
+print('error_max = ' , error_)
+
 # Hold plot
-# interactive()
+import matplotlib.pyplot as plt
+plt.show()

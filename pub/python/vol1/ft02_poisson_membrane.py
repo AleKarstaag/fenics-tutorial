@@ -8,48 +8,49 @@ The load p is a Gaussian function centered at (0, 0.6).
 """
 
 from __future__ import print_function
-from fenics import *
-from mshr import *
+import fenics as FnX
+import mshr as MsH
 import numpy as np
 
 # Create mesh and define function space
-domain = Circle(Point(0, 0), 1)
-mesh = generate_mesh(domain, 64)
-V = FunctionSpace(mesh, 'P', 2)
+domain = MsH.Circle(FnX.Point(0, 0), 1)
+mesh = MsH.generate_mesh(domain, 64)
+V = FnX.FunctionSpace(mesh, 'P', 2)
 
 # Define boundary condition
-w_D = Constant(0)
+w_D = FnX.Constant(0)
 
 def boundary(x, on_boundary):
     return on_boundary
 
-bc = DirichletBC(V, w_D, boundary)
+bc = FnX.DirichletBC(V, w_D, boundary)
 
 # Define load
 beta = 8
 R0 = 0.6
-p = Expression('4*exp(-pow(beta, 2)*(pow(x[0], 2) + pow(x[1] - R0, 2)))',
+p = FnX.Expression('4*exp(-pow(beta, 2)*(pow(x[0], 2) + pow(x[1] - R0, 2)))',
                degree=1, beta=beta, R0=R0)
 
 # Define variational problem
-w = TrialFunction(V)
-v = TestFunction(V)
-a = dot(grad(w), grad(v))*dx
-L = p*v*dx
+w = FnX.TrialFunction(V)
+v = FnX.TestFunction(V)
+a = FnX.dot(FnX.grad(w), FnX.grad(v))*FnX.dx
+L = p*v*FnX.dx
 
 # Compute solution
-w = Function(V)
-solve(a == L, w, bc)
+w = FnX.Function(V)
+FnX.solve(a == L, w, bc)
 
-# Plot solution
-p = interpolate(p, V)
+# Interpolate load 
+p = FnX.interpolate(p, V)
 # plot(w, title='Deflection')
 # plot(p, title='Load')
+#NO
 
 # Save solution to file in VTK format
-vtkfile_w = File('poisson_membrane/deflection.pvd')
+vtkfile_w = FnX.File('poisson_membrane/deflection.pvd')
 vtkfile_w << w
-vtkfile_p = File('poisson_membrane/load.pvd')
+vtkfile_p = FnX.File('poisson_membrane/load.pvd')
 vtkfile_p << p
 
 # Curve plot along x = 0 comparing p and w
